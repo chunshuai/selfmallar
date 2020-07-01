@@ -7,8 +7,8 @@ import LoadingHoc from "../../../../common/loading/loading-hoc.jsx";
 import Layout from "../../../../common/layout/layout.jsx";
 import { createForm } from 'rc-form';
 import * as THREE from 'three';
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls';
-import {AMFLoader} from 'three/examples/jsm/loaders/AMFLoader';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { AMFLoader } from 'three/examples/jsm/loaders/AMFLoader';
 
 
 let cartProps;
@@ -54,67 +54,80 @@ class Web3D extends React.Component {
         var high = this.mount.clientHeight;
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x999999);
-    
+
         scene.add(new THREE.AmbientLight(0x999999));
-    
-        camera = new THREE.PerspectiveCamera(35, this.mount.clientWidth / this.mount.clientHeight, 1, 500);
-    
+
+        camera = new THREE.PerspectiveCamera(35, this.mount.clientWidth / this.mount.clientHeight, 1, 2000);
+
         // Z is up for objects intended to be 3D printed.
-    
+
         camera.up.set(0, 0, 1);
-        camera.position.set(0, - 9, 6);
-    
+        camera.position.set(0, 20, 6);
+
         camera.add(new THREE.PointLight(0xffffff, 0.8));
-    
+
         scene.add(camera);
-    
-        var grid = new THREE.GridHelper(50, 50, 0xffffff, 0x555555);
-        grid.rotateOnAxis(new THREE.Vector3(1, 0, 0), 90 * (Math.PI / 180));
-        scene.add(grid);
-    
+        // this.createGeomety;
+        const geometry = new THREE.BoxGeometry(3, 3, 0.2, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0xE3D8C4 });
+        // geometry.translate(this.state.localX, this.state.localY, this.state.localZ);
+
+        const cube = new THREE.Mesh(geometry, material);
+        // cube.rotation.x = this.state.localX;
+        // cube.rotation.y = this.state.localY;
+        // cube.rotation.z = this.state.localZ;
+
+        this.cube = cube
+        scene.add(cube);
+        // 
+        // var grid = new THREE.GridHelper(50, 50, 0xffffff, 0x555555);
+        // grid.rotateOnAxis(new THREE.Vector3(1, 0, 0), 90 * (Math.PI / 180));
+        // scene.add(grid);
+
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(this.mount.clientWidth, this.mount.clientHeight);
         this.mount.appendChild(renderer.domElement);
-    
         var loader = new AMFLoader();
-        var path="./source/models/amf/rook.amf";
+        var path = "./models/amf/rook.amf";
+        // var path='http://39.96.182.123/three/examples/models/amf/rook.amf';
         loader.load(path, function (amfobject) {
-    
-          scene.add(amfobject);
-          render();
-    
+            console.log("进这里了吗");
+            console.log(path);
+            console.log(amfobject);
+            scene.add(amfobject);
+            render();
+
         });
-    
         var controls = new OrbitControls(camera, renderer.domElement);
         controls.addEventListener('change', render);
         controls.target.set(0, 1.2, 2);
         controls.update();
-    
+
         window.addEventListener('resize', onWindowResize, false);
         function onWindowResize() {
-          camera.aspect = width / high;
-          camera.updateProjectionMatrix();
-    
-          renderer.setSize(width,high);
-          render();
-    
-          // camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
-          // camera.updateProjectionMatrix();
-    
-          // renderer.setSize(this.mount.clientWidth , this.mount.clientHeight);
-    
-          // render();
-    
+            camera.aspect = width / high;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(width, high);
+            render();
+
+            // camera.aspect = this.mount.clientWidth / this.mount.clientHeight;
+            // camera.updateProjectionMatrix();
+
+            // renderer.setSize(this.mount.clientWidth , this.mount.clientHeight);
+
+            // render();
+
         }
-    
+
         function render() {
-    
-          renderer.render(scene, camera);
-    
+
+            renderer.render(scene, camera);
+
         }
-    
-      }
+
+    }
     init = () => {
         const scene = new THREE.Scene()
         const camera = new THREE.PerspectiveCamera(75, this.mount.clientWidth / this.mount.clientHeight, 0.1, 1000);
